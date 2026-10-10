@@ -1,0 +1,25 @@
+name: release
+
+# Push a tag like v1.0.0 to publish a release. get.sh downloads its harly24-cp.tar.gz,
+# so the asset's download count is the number of one-line installs and updates.
+
+on:
+  push:
+    tags: ["v*"]
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build the archive
+        run: git archive --format=tar.gz --prefix=harly24-cp/ -o harly24-cp.tar.gz "$GITHUB_REF_NAME"
+
+      - name: Publish
+        run: gh release create "$GITHUB_REF_NAME" harly24-cp.tar.gz --title "$GITHUB_REF_NAME" --generate-notes
+        env:
+          GH_TOKEN: ${{ github.token }}
