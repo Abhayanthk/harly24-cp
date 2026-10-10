@@ -1,3 +1,4 @@
 .DS_Store
 *.dSYM/
 *.gch
+__pycache__/

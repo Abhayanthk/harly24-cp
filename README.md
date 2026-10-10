@@ -129,7 +129,7 @@ A `missing` line names the command that installs what's missing.
 
 **Then check it works:**
 
-1. **Restart Sublime Text**, so it loads the new package, and pick **Tools > Build System > CP**.
+1. **Restart Sublime Text**, so it loads the new package, and pick **Tools > Build System > CP**. For the layout in the [screenshot](docs/sublime.md), open a `.cpp` file and run **Command Palette > CP: Contest layout**.
 2. Open `demo.cpp` in your solving folder and press **Cmd+B** (Ctrl+B on Linux). The panel ends with `✓ OK`, and `debug.txt` fills up.
 3. Change `#define DEMO 0` to `1` and press Cmd+B again: a crash, reported with its line. DEMO 0 to 8 shows every verdict.
 4. In a new `.cpp` file, type `CPP` and press **Tab** for the contest template.
@@ -137,7 +137,7 @@ A `missing` line names the command that installs what's missing.
 | Option | Does |
 | --- | --- |
 | `--workspace DIR` | use another solving folder |
-| `--with-prefs` | also link my Sublime preferences, keymap and mousemap |
+| `--with-prefs` | also link my Sublime preferences, keymap and mousemap ([what's in them](docs/sublime.md)) |
 | `--uninstall` | remove every link the installer made; your files and the backups stay |
 
 Because everything is a link, `git pull` updates the whole setup at once.
@@ -176,6 +176,7 @@ harly24-cp
 │   └── AllHeaders.h      what the template pulls in under -DLOCAL
 ├── sublime/              Sublime package, linked as Packages/harly24-cp
 │   ├── CP.sublime-build  Cmd+B and its variants
+│   ├── cp_layout.py      Command Palette > CP: Contest layout
 │   └── snippets/         templates, math, graphs, data structures, arrays and strings, bits
 ├── preferences/          my editor settings (installed with --with-prefs)
 ├── workspace/            demo.cpp, gen.cpp and my contest checklist, copied on install
