@@ -1,0 +1,63 @@
+<snippet>
+	<content><![CDATA[
+template<typename T>
+class MultiBag {
+private:
+    std::multiset<T> bag;
+    // <!-- MultiBag<int> st for initialization -->
+public:
+    auto begin() const { return bag.begin(); }
+    auto end() const { return bag.end(); }
+
+    // Insert an element
+    void insert(const T& value) {
+        bag.insert(value);
+    }
+
+    // Remove exactly one instance (if present)
+    void removeOne(const T& value) {
+        auto it = bag.find(value);
+        if (it != bag.end()) bag.erase(it);
+    }
+
+    // Remove all instances of a value
+    void removeAll(const T& value) {
+        bag.erase(value);
+    }
+
+    // Count how many times a value appears
+    int count(const T& value) const {
+        return bag.count(value);
+    }
+
+    // Check if it's empty
+    bool empty() const {
+        return bag.empty();
+    }
+
+    // Get the smallest element
+    T getMin() const {
+        return *bag.begin();
+    }
+
+    // Get the largest element
+    T getMax() const {
+        return *bag.rbegin();
+    }
+
+    // Total size
+    int size() const {
+        return bag.size();
+    }
+
+    // Print all elements (optional for debugging)
+    void print() const {
+        for (const T& x : bag) std::cout << x << " ";
+        std::cout << "\n";
+    }
+};
+]]></content>
+	<tabTrigger>multiset</tabTrigger>
+	<scope>source.c++</scope>
+	<description>Multiset wrapper with counted erase</description>
+</snippet>

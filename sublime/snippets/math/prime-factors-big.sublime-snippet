@@ -1,0 +1,116 @@
+<snippet>
+	<content><![CDATA[
+using ll = long long;
+using ull = unsigned long long;
+
+ll mulmod(ll a, ll b, ll mod) {
+    ll res = 0;
+    a %= mod;
+    while (b) {
+        if (b & 1) res = (__int128)res + a % mod;
+        a = (__int128)a + a % mod;
+        b >>= 1;
+    }
+    return res % mod;
+}
+
+ll modmul(ll a, ll b, ll mod) {
+    return (__int128)a * b % mod;
+}
+
+ll modpow(ll base, ll exp, ll mod) {
+    ll res = 1;
+    base %= mod;
+    while (exp > 0) {
+        if (exp & 1) res = modmul(res, base, mod);
+        base = modmul(base, base, mod);
+        exp >>= 1;
+    }
+    return res;
+}
+
+bool miller_rabin(ll n) {
+    if (n < 2) return false;
+    for (ll p : {2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37}) {
+        if (n == p) return true;
+        if (n % p == 0) return false;
+    }
+
+    ll d = n - 1;
+    int r = 0;
+    while ((d & 1) == 0) {
+        d >>= 1;
+        r++;
+    }
+
+    for (ll a : {2, 3, 5, 7, 11}) {
+        if (a >= n) continue;
+        ll x = modpow(a, d, n);
+        if (x == 1 || x == n - 1) continue;
+        bool ok = false;
+        for (int i = 0; i < r - 1; i++) {
+            x = modmul(x, x, n);
+            if (x == n - 1) {
+                ok = true;
+                break;
+            }
+        }
+        if (!ok) return false;
+    }
+
+    return true;
+}
+
+ll pollards_rho(ll n) {
+    if (n % 2 == 0) return 2;
+    mt19937_64 rng(chrono::steady_clock::now().time_since_epoch().count());
+    ll c = rng() % (n - 1) + 1;
+    ll x = rng() % (n - 2) + 2;
+    ll y = x;
+    ll d = 1;
+    while (d == 1) {
+        x = (modmul(x, x, n) + c) % n;
+        y = (modmul(y, y, n) + c) % n;
+        y = (modmul(y, y, n) + c) % n;
+        d = gcd(abs(x - y), n);
+        if (d == n) return pollards_rho(n); // retry
+    }
+    return d;
+}
+
+void collect_factors(ll n, set<ll>& factors) {
+    if (n <= 1) return;
+    if (miller_rabin(n)) {
+        factors.insert(n);
+        return;
+    }
+    ll d = pollards_rho(n);
+    collect_factors(d, factors);
+    collect_factors(n / d, factors);
+}
+
+vector<ll> factorize(ll n) { //Call this for prime_factorisarion
+    vector<ll> factors;
+    if (n <= 1) return factors;
+    if (miller_rabin(n)) {
+        factors.push_back(n);
+        return factors;
+    }
+    ll d = pollards_rho(n);
+    vector<ll> left = factorize(d);
+    vector<ll> right = factorize(n / d);
+    factors.insert(factors.end(), left.begin(), left.end());
+    factors.insert(factors.end(), right.begin(), right.end());
+    return factors;
+}
+
+vector<ll> unique_factors(ll n) { //call this for unique_factors
+    set<ll> factors;
+    collect_factors(n, factors);
+    return vector<ll>(factors.begin(), factors.end());
+}
+]]></content>
+	<tabTrigger>PrimeFactorizationForAbove1e12</tabTrigger>
+	<scope>source.c++</scope>
+	<description>Factorize numbers above 1e12: Miller-Rabin + Pollard rho</description>
+</snippet>

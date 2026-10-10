@@ -1,0 +1,203 @@
+<snippet>
+	<content><![CDATA[
+#include <bits/stdc++.h>
+using namespace std;
+struct BinaryLifting {
+    int n;
+    int LOG; // number of levels = ceil(log2(n)) + 1
+    vector<vector<int>> up; // up[v][j] = 2^j-th ancestor of v
+    vector<int> depth;
+    vector<int> tin, tout;
+    int timer;
+
+    // Weighted support
+    bool weighted = false;
+    vector<long long> distRoot; // distance from root (if weighted)
+    vector<vector<long long>> maxEdge; // optional: max edge on path to 2^j ancestor (example)
+
+    vector<vector<pair<int,long long>>> g; // adjacency: (to, weight)
+    
+    BinaryLifting(int n = 0, bool weighted = false) { init(n, weighted); }
+
+    void init(int n_, bool weighted_ = false) {
+        n = n_;
+        weighted = weighted_;
+        LOG = 1;
+        while ((1<<LOG) <= max(1, n)) ++LOG;
+        up.assign(n, vector<int>(LOG, -1));
+        depth.assign(n, 0);
+        tin.assign(n, 0);
+        tout.assign(n, 0);
+        timer = 0;
+        g.assign(n, {});
+        if (weighted) {
+            distRoot.assign(n, 0);
+            maxEdge.assign(n, vector<long long>(LOG, LLONG_MIN));
+        }
+    }
+
+    void add_edge(int u, int v, long long w = 1) {
+        // undirected tree edge
+        g[u].push_back({v, w});
+        g[v].push_back({u, w});
+    }
+
+    void dfs(int root = 0) {
+        // iterative or recursive; we'll do recursive helper
+        timer = 0;
+        dfs_visit(root, root, 0, 0);
+        // fill ancestors folding: up[v][j] already has up[v][0] set during dfs
+        for (int j = 1; j < LOG; ++j) {
+            for (int v = 0; v < n; ++v) {
+                int mid = up[v][j-1];
+                if (mid == -1) up[v][j] = -1;
+                else up[v][j] = up[mid][j-1];
+                if (weighted) {
+                    long long a = maxEdge[v][j-1];
+                    long long b = (mid == -1 ? LLONG_MIN : maxEdge[mid][j-1]);
+                    maxEdge[v][j] = max(a, b);
+                }
+            }
+        }
+    }
+
+    void dfs_visit(int v, int p, int d, long long w_from_parent) {
+        tin[v] = ++timer;
+        up[v][0] = (p == v ? -1 : p); // root has -1 parent
+        depth[v] = d;
+        if (weighted) {
+            if (p == v) distRoot[v] = 0, maxEdge[v][0] = LLONG_MIN;
+            else {
+                distRoot[v] = distRoot[p] + w_from_parent;
+                // maxEdge[v][0] is the weight of edge v--p
+                maxEdge[v][0] = w_from_parent;
+            }
+        }
+
+        for (auto [to, wt] : g[v]) {
+            if (to == p) continue;
+            dfs_visit(to, v, d+1, wt);
+        }
+        tout[v] = ++timer;
+    }
+
+    void build(int root = 0) {
+        // Reset timer and run dfs from root
+        timer = 0;
+        dfs_visit(root, root, 0, 0);
+        // fix up[root][0] = -1 already in dfs_visit
+        for (int j = 1; j < LOG; ++j) {
+            for (int v = 0; v < n; ++v) {
+                int mid = up[v][j-1];
+                if (mid == -1) up[v][j] = -1;
+                else up[v][j] = up[mid][j-1];
+                if (weighted) {
+                    long long a = maxEdge[v][j-1];
+                    long long b = (mid == -1 ? LLONG_MIN : maxEdge[mid][j-1]);
+                    maxEdge[v][j] = max(a, b);
+                }
+            }
+        }
+    }
+
+    bool is_ancestor(int u, int v) {
+        // is u an ancestor of v?
+        return tin[u] <= tin[v] && tout[v] <= tout[u];
+    }
+
+    int lca(int a, int b) {
+        if (a == b) return a;
+        if (is_ancestor(a, b)) return a;
+        if (is_ancestor(b, a)) return b;
+        // lift a up until just above LCA
+        for (int j = LOG-1; j >= 0; --j) {
+            int anc = up[a][j];
+            if (anc != -1 && !is_ancestor(anc, b)) {
+                a = anc;
+            }
+        }
+        // now parent of a is LCA
+        return up[a][0];
+    }
+
+    int jump(int v, int k) {
+        // returns k-th ancestor of v (0-th = v), or -1 if doesn't exist
+        for (int j = 0; j < LOG && v != -1; ++j) {
+            if (k & (1<<j)) v = up[v][j];
+        }
+        return v;
+    }
+
+    long long dist(int u, int v) {
+        if (!weighted) {
+            // distance in edges: depth[u] + depth[v] - 2*depth[lca]
+            int L = lca(u, v);
+            return (long long)depth[u] + depth[v] - 2*depth[L];
+        } else {
+            int L = lca(u, v);
+            return distRoot[u] + distRoot[v] - 2*distRoot[L];
+        }
+    }
+
+    // Example: get max edge on path u-v (only valid if weighted and maxEdge filled properly)
+    long long max_on_path(int u, int v) {
+        if (!weighted) throw runtime_error("max_on_path requires weighted=true");
+        long long best = LLONG_MIN;
+        int L = lca(u, v);
+        best = max(best, max_on_path_to_ancestor(u, L));
+        best = max(best, max_on_path_to_ancestor(v, L));
+        return best;
+    }
+
+    long long max_on_path_to_ancestor(int v, int anc) {
+        // return max edge weight on path v -> anc (anc must be an ancestor of v)
+        if (!weighted) throw runtime_error("weighted required");
+        long long best = LLONG_MIN;
+        int diff = depth[v] - depth[anc];
+        for (int j = 0; j < LOG && v != -1; ++j) {
+            if (diff & (1<<j)) {
+                best = max(best, maxEdge[v][j]);
+                v = up[v][j];
+            }
+        }
+        return best;
+    }
+};
+
+// -------------------------- Example usage --------------------------
+int main() {
+    ios::sync_with_stdio(false);
+    cin.tie(nullptr);
+    int n;
+    if (!(cin >> n)) return 0;
+    // Example: unweighted tree
+    BinaryLifting BL(n, false);
+    for (int i = 0; i < n-1; ++i) {
+        int u, v; cin >> u >> v; // 0-based nodes; if input is 1-based, subtract 1
+        BL.add_edge(u, v);
+    }
+    BL.build(0); // build with root = 0
+
+    // Example queries:
+    int q; cin >> q;
+    while (q--) {
+        int type; cin >> type;
+        if (type == 1) {
+            int a,b; cin >> a >> b;
+            cout << BL.lca(a,b) << '\n';
+        } else if (type == 2) {
+            int v,k; cin >> v >> k;
+            cout << BL.jump(v,k) << '\n';
+        } else if (type == 3) {
+            int a,b; cin >> a >> b;
+            cout << BL.dist(a,b) << '\n';
+        }
+    }
+    return 0;
+}
+
+]]></content>
+	<tabTrigger>binaryLiftintTree</tabTrigger>
+	<scope>source.c++</scope>
+	<description>Binary lifting: LCA, k-th ancestor, max edge on a path</description>
+</snippet>

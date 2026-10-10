@@ -1,0 +1,11 @@
+<snippet>
+	<content><![CDATA[
+// __builtin_clz(x)    → leading zeros
+// __builtin_ctz(x)    → trailing zeros
+// __builtin_popcount(x) → count of 1-bits
+// __builtin_parity(x) → 1 if #bits is odd, 0 if even
+]]></content>
+	<tabTrigger>bit_functions</tabTrigger>
+	<scope>source.c++</scope>
+	<description>GCC bit builtins cheat sheet</description>
+</snippet>

@@ -1,0 +1,18 @@
+[
+    {
+        "keys": ["alt+up"], 
+        "command": "swap_line_up"
+    },
+    {
+        "keys": ["alt+down"], 
+        "command": "swap_line_down"
+    },
+    {
+        "keys": ["alt+shift+up"], 
+        "command": "duplicate_line"
+    },
+    {
+        "keys": ["alt+shift+down"], 
+        "command": "duplicate_line"
+    },
+]

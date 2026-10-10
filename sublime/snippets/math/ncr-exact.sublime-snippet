@@ -1,0 +1,20 @@
+<snippet>
+	<content><![CDATA[
+const long long CAP = 1e18;   // your acceptable ceiling
+
+long long nCr_exact(long long n, long long r) {
+    if (r < 0 || r > n) return 0;
+    r = min(r, n - r);                 
+    __int128 res = 1;
+    for (long long i = 1; i <= r; i++) {
+        res = res * (n - r + i) / i;   
+        if (res > CAP) return -1;      
+    }
+    return (long long)res;
+}
+
+]]></content>
+	<tabTrigger>ncrSimple</tabTrigger>
+	<scope>source.c++</scope>
+	<description>Exact nCr with __int128, -1 above a cap</description>
+</snippet>

@@ -1,0 +1,61 @@
+<snippet>
+	<content><![CDATA[
+
+// Toggle debugging: Set DEBUG to 0 to disable all debug output
+// Don't forget to use debug.txt
+#define DEBUG 1
+#if DEBUG
+    #define debug(...) __f(debug_out, #__VA_ARGS__, __VA_ARGS__)
+#else
+    #define debug(...)
+#endif
+
+ofstream debug_out("debug.txt"); //    debug_out.close();
+
+template <typename T>
+ostream& operator<<(ostream& os, const vector<T>& v) {
+    os << "[";
+    for (size_t i = 0; i < v.size(); i++) {
+        os << v[i];
+        if (i != v.size() - 1) os << ", ";
+    }
+    os << "]";
+    return os;
+}
+
+template <typename T>
+ostream& operator<<(ostream& os, const set<T>& s) {
+    os << "{";
+    for (auto it = s.begin(); it != s.end(); ++it) {
+        os << *it;
+        if (next(it) != s.end()) os << ", ";
+    }
+    os << "}";
+    return os;
+}
+
+template <typename K, typename V>
+ostream& operator<<(ostream& os, const map<K, V>& m) {
+    os << "{";
+    for (auto it = m.begin(); it != m.end(); ++it) {
+        os << it->first << ": " << it->second;
+        if (next(it) != m.end()) os << ", ";
+    }
+    os << "}";
+    return os;
+}
+
+template <typename... Args>
+void __f(ofstream& out, const char* names, Args&&... args) {
+    if (out.is_open()) {
+        out << "[DEBUG] " << names << " : ";
+        ((out << args << " | "), ...);
+        out << endl;
+    } else {
+        cerr << "Error: Unable to open debug.txt" << endl;
+    }
+}]]></content>
+	<tabTrigger>debuggingAdvanced</tabTrigger>
+	<scope>source.c++</scope>
+	<description>Debugger v2 as a drop-in snippet</description>
+</snippet>

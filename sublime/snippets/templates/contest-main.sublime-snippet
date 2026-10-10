@@ -1,0 +1,101 @@
+<snippet>
+	<content><![CDATA[
+/*        ,@@@@@@@,
+    ,,,.   ,@@@@@@/@@,  .oo8888o.
+ ,&%%&%&&%,@@@@@/@@@@@@,8888\88/8o
+,%&\%&&%&&%,@@@\@@@/@@@88\88888/88'
+%&&%&%&/%&&%@@\@@/ /@@@88888\88888'
+%&&%/ %&%%&&@@\ V /@@' `88\8 `/88'
+`&%\ ` /%&'    |.|        \ '|8'
+    |o|        | |         | |
+    |.|        | |         | |
+ \/ ._\//_/__/  ,\_//__\/.  \_//__/_
+ */
+
+#include <bits/stdc++.h>
+#if __has_include(<ext/pb_ds/assoc_container.hpp>)
+#include <ext/pb_ds/assoc_container.hpp>
+#include <ext/pb_ds/tree_policy.hpp>
+// order_of_key(x) = # elements < x, *find_by_order(k) = k-th smallest (0-indexed)
+template <class T>
+using ordered_set = __gnu_pbds::tree<T, __gnu_pbds::null_type, std::less<T>, __gnu_pbds::rb_tree_tag, __gnu_pbds::tree_order_statistics_node_update>;
+#endif
+
+#ifdef LOCAL
+#include "AllHeaders.h"
+#else
+#define debug(...)       ;
+#endif
+
+#define fastIO \
+ios::sync_with_stdio(false); cin.tie(nullptr);\
+cout.precision(numeric_limits<double>::max_digits10)
+
+using namespace std;
+
+#define PI                              3.141592653589793238462
+#define pb                              push_back
+#define vi                              vector<int>
+#define vp                              vector<pair<int, int>>
+#define fi                              first
+#define sec                             second
+#define vii                             vector<vector<int>>
+#define int                             long long
+#define inf                             (long long)2e18
+#define endl                            "\n"
+#define line                            cout << endl
+#define sz(a)                           ((int)(a).size())
+#define neginf                          (-inf)
+#define Min(a)                          *min_element((a).begin(), (a).end())
+#define Max(a)                          *max_element((a).begin(), (a).end())
+#define all(v)                          (v).begin(), (v).end()
+#define double                          long double
+#define input(v)                        for(int i = 0; i < sz(v); i++) cin >> v[i]
+#define printf(v)                       for(auto x: v) cout << x << " "
+#define lcm(a, b)                       ((a) / gcd((a), (b)) * (b))
+#define nfor(i,a,b)                     for(int i = a; i < b; i++)
+#define rfor(i,a,b)                     for(int i = a; i >= b; i--)
+
+int n;
+vi v, f, g, res;
+vii adj, dp;
+
+void Harly24()
+{
+    cin >> n;
+    v.assign(n,0);
+}
+
+int32_t main()
+{
+    fastIO;
+    int t = 1; cin >> t; while(t--) Harly24();
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+]]></content>
+	<tabTrigger>CPP</tabTrigger>
+	<scope>source.c++</scope>
+	<description>Contest template: ordered_set, debug(), macros, multi-test main</description>
+</snippet>

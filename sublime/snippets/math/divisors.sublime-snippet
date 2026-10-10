@@ -1,0 +1,23 @@
+<snippet>
+	<content><![CDATA[
+vi factors(int n)
+{
+    vi temp;
+    for(int i = 1; i*i <= n; i++)
+    {
+        if(n % i == 0)
+        {
+            temp.pb(i);
+            if(n/i != i)
+            {
+                temp.pb(n/i);
+            }
+        }
+    }
+    return temp;
+}
+]]></content>
+	<tabTrigger>factors</tabTrigger>
+	<scope>source.c++</scope>
+	<description>All divisors in O(sqrt n)</description>
+</snippet>

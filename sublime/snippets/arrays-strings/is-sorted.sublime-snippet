@@ -1,0 +1,14 @@
+<snippet>
+	<content><![CDATA[
+bool is_sorted(vi v){
+    debug(v);
+    nfor(i,0,sz(v)-1){
+        if(v[i] > v[i+1]) return false;
+    }
+    return true;
+}
+]]></content>
+	<tabTrigger>isSorted</tabTrigger>
+	<scope>source.c++</scope>
+	<description>Non-decreasing check</description>
+</snippet>

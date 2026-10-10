@@ -1,0 +1,38 @@
+<snippet>
+	<content><![CDATA[
+// ─── Segment Tree — Point Update, Range Min Query ───────────────
+
+const int MAXN = 1e5 + 5;
+const int INF  = 1e9;
+int tree[4 * MAXN];
+
+void build(int a[], int node, int l, int r) {
+    if (l == r) { tree[node] = a[l]; return; }
+    int mid = (l + r) / 2;
+    build(a, 2*node,   l,   mid);
+    build(a, 2*node+1, mid+1, r);
+    tree[node] = min(tree[2*node], tree[2*node+1]); // swap min→max for Max query
+}
+
+void update(int node, int l, int r, int idx, int val) {
+    if (l == r) { tree[node] = val; return; }
+    int mid = (l + r) / 2;
+    if (idx <= mid) update(2*node,   l,   mid, idx, val);
+    else            update(2*node+1, mid+1, r, idx, val);
+    tree[node] = min(tree[2*node], tree[2*node+1]);
+}
+
+int query(int node, int l, int r, int ql, int qr) {
+    if (qr < l || r < ql) return INF;          // identity for min (use -INF for max)
+    if (ql <= l && r <= qr) return tree[node];
+    int mid = (l + r) / 2;
+    return min(query(2*node,   l,   mid, ql, qr),
+               query(2*node+1, mid+1, r, ql, qr));
+}
+
+// For Max query: replace min() with max() and INF with -INF everywhere
+]]></content>
+	<tabTrigger>segmentTreeMinMax</tabTrigger>
+	<scope>source.c++</scope>
+	<description>Segment tree: point update, range min</description>
+</snippet>

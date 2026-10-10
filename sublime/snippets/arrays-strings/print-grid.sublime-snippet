@@ -1,0 +1,19 @@
+<snippet>
+	<content><![CDATA[
+void print(vector<vector<char>>  temp)
+{
+    for(auto v: temp)
+    {
+        for(auto a: v)
+        {
+            cout << a << "";
+        }
+        line;
+    }
+};
+
+]]></content>
+	<tabTrigger>print2DList</tabTrigger>
+	<scope>source.c++</scope>
+	<description>Print a char grid</description>
+</snippet>

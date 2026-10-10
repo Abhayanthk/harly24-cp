@@ -1,0 +1,282 @@
+#!/usr/bin/env bash
+# cprun: compile one C++ file, run it on input.txt under guards, and explain what happened.
+#
+#   cprun [debug|fast|san] A.cpp        debug is the default; any gen*.cpp is a generator
+#   TL=60 ML=2048 cprun fast A.cpp      time limit (s) and memory limit (MB) for this run
+#
+# Files next to the source: input.txt (stdin), output.txt (stdout), error.txt (stderr),
+# debug.txt (debug()), info.txt (the verdict, also printed). macOS and Linux.
+
+set -u
+
+usage() { sed -n '2,8p' "$0" | sed 's/^# \{0,1\}//'; exit "${1:-0}"; }
+
+mode=debug
+case ${1:-} in
+  -h|--help) usage ;;
+  debug|fast|san|gen) mode=$1; shift ;;
+esac
+[ $# -eq 1 ] || usage 2
+[ -f "$1" ] || { echo "cprun: no such file: $1" >&2; exit 2; }
+TL=${TL:-5}
+ML=${ML:-1024}
+
+# ---------------------------------------------------------------- where things are
+
+resolve() {   # follow symlinks to the real file (macOS has no readlink -f in old releases)
+  local path=$1 dir
+  while [ -L "$path" ]; do
+    dir=$(cd -P "$(dirname "$path")" && pwd)
+    path=$(readlink "$path")
+    [[ $path == /* ]] || path="$dir/$path"
+  done
+  echo "$path"
+}
+
+repo=$(cd -P "$(dirname "$(resolve "${BASH_SOURCE[0]}")")/.." && pwd)
+include="$repo/include"
+dir=$(cd "$(dirname "$1")" && pwd)
+file=$(basename "$1")
+name=${file%.*}
+case $name in gen*) mode=gen ;; esac   # a generator writes input.txt instead of being judged
+
+os=$(uname -s)
+if [ "$os" = Darwin ]; then cache="$HOME/Library/Caches/harly24-cp"; else cache="${XDG_CACHE_HOME:-$HOME/.cache}/harly24-cp"; fi
+mkdir -p "$cache/bin" "$cache/tmp"
+# One binary per folder and scratch files per run, so two runs at once can't collide.
+bin="$cache/bin/$name-$mode-$(printf '%s' "$dir" | cksum | cut -d' ' -f1)"
+run_tmp=$(mktemp -d "$cache/tmp/run.XXXXXX")
+trap 'rm -rf "$run_tmp"' EXIT
+
+# ---------------------------------------------------------------- toolchain
+
+find_gcc() {   # Codeforces judges with GCC. On macOS plain g++ is Apple clang, so prefer Homebrew's g++-NN.
+  local c path
+  for c in /opt/homebrew/bin/g++-{16,15,14,13} /usr/local/bin/g++-{16,15,14,13} g++-{16,15,14,13} g++; do
+    path=$(command -v "$c" 2>/dev/null) || continue
+    "$path" --version 2>/dev/null | grep -q 'Free Software Foundation' && { echo "$path"; return; }
+  done
+  return 1
+}
+
+GXX=$(find_gcc) || { echo "cprun: GCC not found. macOS: brew install gcc   Linux: sudo apt install g++" >&2; exit 2; }
+gcc_major=$("$GXX" -dumpversion | cut -d. -f1)
+
+common=(-std=c++23)
+link=()
+if [ "$os" = Darwin ]; then
+  common+=(-mmacosx-version-min="$(sw_vers -productVersion | cut -d. -f1).0")   # quiets "overriding deployment version"
+  link+=(-Wl,-stack_size,0x20000000)   # 512 MB stack; Codeforces gives 256 MB, macOS only 8 MB
+fi
+if [ "$gcc_major" -ge 14 ]; then traps=-fsanitize-trap=all; else traps=-fsanitize-undefined-trap-on-error; fi
+warnings=(-Wall -Wextra -Wno-unused-parameter -Wshadow=local -Wlogical-op -Wduplicated-cond -Werror=return-type)
+
+case $mode in
+  debug)
+    cxx=$GXX
+    flags=("${common[@]}" -O1 -g1 -DLOCAL -I"$include" -D_GLIBCXX_DEBUG
+           -fsanitize=signed-integer-overflow,shift,integer-divide-by-zero,bounds "$traps" "${warnings[@]}") ;;
+  fast|gen)
+    cxx=$GXX
+    flags=("${common[@]}" -O2 -Wall) ;;
+  san)
+    if [ "$os" = Darwin ]; then   # Homebrew GCC ships no sanitizer runtime on macOS; clang does, but has no pb_ds
+      if grep -E 'ordered_set *<|__gnu_pbds::tree *<' "$dir/$file" | grep -vqE '^ *using ordered_set'; then
+        echo "[san] $file uses ordered_set, and clang has no pb_ds, so Sanitize can't build it."
+        echo "      Use the default build: it names the crash line too."
+        exit 1
+      fi
+      cxx=$(command -v clang++)
+    else
+      cxx=$GXX
+    fi
+    flags=(-std=c++23 -O1 -g -DLOCAL -I"$include" -fsanitize=address,undefined -fno-sanitize-recover=all
+           -fno-omit-frame-pointer -Wall) ;;
+esac
+
+# Precompiled <bits/stdc++.h> (GCC builds only): about a second off every build.
+# Rebuilt automatically when the compiler or flags change. Only used when the include is the first line.
+if [ "$cxx" = "$GXX" ]; then
+  pch="$cache/pch/${mode/gen/fast}"
+  stamp="$("$GXX" --version | head -1) ${flags[*]}"
+  if [ ! -f "$pch/bits/stdc++.h.gch" ] || [ "$(cat "$pch/stamp" 2>/dev/null)" != "$stamp" ]; then
+    header=$(echo '#include <bits/stdc++.h>' | "$GXX" -std=c++23 -x c++ -E -H - 2>&1 >/dev/null | grep -m1 'bits/stdc++.h' | sed 's/^\.* *//')
+    mkdir -p "$pch/bits" && cp "$header" "$pch/bits/stdc++.h"
+    echo "[$mode] building the precompiled header (once, ~5 s)"
+    "$GXX" "${flags[@]}" -x c++-header "$pch/bits/stdc++.h" -o "$pch/bits/stdc++.h.gch" && printf '%s' "$stamp" > "$pch/stamp"
+  fi
+  flags=(-I"$pch" "${flags[@]}")
+fi
+[ "$mode" = gen ] && flags+=(-I"$include")
+
+"$cxx" "${flags[@]}" "$dir/$file" -o "$bin" ${link[@]+"${link[@]}"} || exit 1
+cd "$dir" || exit 1
+
+big_stack() { [ "$os" = Darwin ] || ulimit -s 1048576 2>/dev/null || true; }   # Linux: 1 GB stack for deep DFS
+
+# ---------------------------------------------------------------- generator
+
+if [ "$mode" = gen ]; then
+  out="$run_tmp/gen.out"
+  ( ulimit -f 65536; perl -e 'alarm shift; exec @ARGV' 10 "$bin" > "$out" 2> "$run_tmp/gen.err" )
+  rc=$?
+  seed=$(grep '^seed ' "$run_tmp/gen.err" | tail -1)
+  grep -v '^seed ' "$run_tmp/gen.err" | head -c 3000
+  echo "----------------------------------------"
+  if [ "$rc" -ne 0 ]; then
+    echo "[gen] $file  ·  ✗ generator failed (exit $rc), input.txt left as it was"
+    exit 1
+  fi
+  [ -s input.txt ] && cp input.txt input.prev.txt   # the sample you pasted survives one generate
+  cp "$out" input.txt
+  bytes=$(wc -c < input.txt | tr -d ' ')
+  lines=$(wc -l < input.txt | tr -d ' ')
+  size=$(awk -v b="$bytes" 'BEGIN { if (b >= 1048576) printf "%.1f MB", b / 1048576; else if (b >= 1024) printf "%.0f KB", b / 1024; else printf "%d B", b }')
+  echo "[gen] $file → input.txt  ·  $lines lines  ·  $size  ·  $seed"
+  head -n 3 input.txt | cut -c1-100 | sed 's/^/    /'
+  [ "$lines" -gt 3 ] && echo "    ..."
+  [ -f input.prev.txt ] && echo "    (previous input saved as input.prev.txt)"
+  exit 0
+fi
+
+# ---------------------------------------------------------------- guarded run
+
+[ -f input.txt ] || : > input.txt
+: > debug.txt
+report="$run_tmp/report"
+# Sanitize: no leak reports (CP code rarely frees), stop at the first error.
+export ASAN_OPTIONS=detect_leaks=0:abort_on_error=1 UBSAN_OPTIONS=print_stacktrace=1
+
+# Guards, so a runaway can't freeze the machine:
+#   time    killed after $TL s          memory  killed above $ML MB (polled; macOS ignores ulimit -v)
+#   files   10 MB cap per file          stderr  goes to error.txt, never floods the build panel
+#   debug() debug.h ends the run itself when it floods
+( ulimit -f 10240
+  big_stack
+  perl -e '
+    use POSIX ":sys_wait_h";
+    use Time::HiRes qw(time sleep);
+    my ($tl, $ml, $bin, $report) = @ARGV;
+    sub rss_kb {
+        my $pid = shift;
+        if (open my $f, "<", "/proc/$pid/status") { while (<$f>) { return $1 if /^VmRSS:\s+(\d+)/ } return 0 }
+        return `ps -o rss= -p $pid` + 0;
+    }
+    my $t0 = time;
+    my $pid = fork // die "fork: $!";
+    if (!$pid) { exec $bin or exit 127 }
+    my ($killed, $peak, $cpu, $status) = ("-", 0, 0, 0);
+    while (1) {
+        my @before = times;
+        if (waitpid($pid, WNOHANG) == $pid) {
+            my @after = times;                          # CPU time of the program alone, as the judge measures
+            $cpu = $after[2] + $after[3] - $before[2] - $before[3];
+            $status = $?;
+            last;
+        }
+        my $rss = rss_kb($pid);
+        $peak = $rss if $rss > $peak;
+        if ($killed eq "-" && $rss > $ml * 1024) { $killed = "mem";  kill "KILL", $pid }
+        if ($killed eq "-" && time - $t0 > $tl)  { $killed = "time"; kill "KILL", $pid }
+        sleep 0.02;
+    }
+    open my $r, ">", $report or die;
+    printf $r "%d %d %.2f %s %d\n", $status >> 8, $status & 127, $cpu, $killed, $peak / 1024;
+  ' "$TL" "$ML" "$bin" "$report" < input.txt > output.txt 2> error.txt )
+
+read -r code sig cpu killed peak_mb < "$report"
+
+# ---------------------------------------------------------------- verdict
+
+why=(); next=''
+case $killed in
+  time) verdict="TLE: killed after ${TL} s"
+        why=("endless loop (a while/for whose condition never turns false)" "or the code reads more input than input.txt has")
+        next="slow but finite? put a max-size test in input.txt and use the Fast variant" ;;
+  mem)  verdict="Memory guard: killed above ${ML} MB"
+        why=("push_back / insert inside an endless loop" "or an array far too big (Codeforces usually allows 256 MB)") ;;
+  *) case $sig in
+    0)  case $code in
+          0)  verdict="OK" ;;
+          86) verdict="Stopped: debug() flooded"
+              why=("almost always an endless loop" "the last debug lines above show the state it repeats") ;;
+          *)  verdict="exit code $code"
+              why=("main returned $code, or the code called exit($code)") ;;
+        esac ;;
+    11|10) verdict="Runtime error: segfault"
+           why=("index out of range on a C array or pointer" "recursion that never stops (missing base case?)") ;;
+    6)  verdict="Runtime error: abort (the message above names the cause)"
+        why=("v[i] with i out of range" "*s.begin(), s.top() or q.front() on an empty container"
+             "a sort comparator using <= (it must be <)" "a failed assert") ;;
+    5|4) verdict="Runtime error: UB trap, one of"
+         why=("signed overflow: a * b or a + b too big for long long" "1 << j with j >= 31: write 1LL << j"
+              "x / 0 or x % 0" "C-array index out of range") ;;
+    8)  verdict="Runtime error: division by zero" ;;
+    25) verdict="Stopped: a file passed 10 MB"
+        why=("endless print loop?") ;;
+    *)  verdict="killed by signal $sig" ;;
+  esac ;;
+esac
+
+if [ "$mode" = san ] && [ "$killed" = "-" ]; then   # a sanitizer report says more than the exit status
+  if grep -q 'AddressSanitizer' error.txt; then
+    verdict="Runtime error: memory error (AddressSanitizer report above)"
+    why=("reading or writing past the end of an array or new[] block" "using memory after delete, or after a vector reallocated")
+  elif grep -q 'runtime error:' error.txt; then
+    verdict="Runtime error: undefined behavior (report above)"
+    why=()
+  fi
+fi
+
+# ---------------------------------------------------------------- crash line
+
+# 1) a sanitizer report names it; 2) otherwise rerun once under the debugger (about 0.5 s).
+# The rerun works on a copy outside the source folder: on macOS a debugged binary loses the editor's
+# folder permission and would ask for ~/Documents access after every build.
+file_re="[/ ]${file//./\\.}:[0-9]+"
+where=$(grep -m1 -oE "$file_re" error.txt 2>/dev/null | head -1 | cut -c2-)
+if [ -z "$where" ] && [ -z "${CPRUN_NO_DEBUGGER:-}" ] && [ "$mode" = debug ] && [ "$killed" = "-" ] && [[ " 4 5 6 8 10 11 " == *" $sig "* ]]; then
+  rerun="$run_tmp/rerun"
+  mkdir -p "$rerun" && cp input.txt "$rerun/input.txt"
+  if [ "$os" = Darwin ] && [ -x /usr/bin/lldb ]; then
+    trace=$(perl -e 'alarm shift; exec @ARGV' $((TL + 15)) /usr/bin/lldb --batch \
+              -o "settings set stop-line-count-before 0" -o "settings set stop-line-count-after 0" \
+              -o "process launch -w '$rerun' -i '$rerun/input.txt' -o /dev/null -e /dev/null" \
+              -k "bt 60" -k "quit" -- "$bin" 2>/dev/null)
+  elif command -v gdb >/dev/null; then
+    trace=$(cd "$rerun" && big_stack && perl -e 'alarm shift; exec @ARGV' $((TL + 15)) gdb -q -batch \
+              -ex "run < input.txt > /dev/null 2>&1" -ex "bt 60" "$bin" 2>/dev/null)
+  else
+    trace=''
+    next="install gdb to see the crash line here"
+  fi
+  where=$(printf '%s\n' "$trace" | grep -m1 -oE "$file_re" | head -1 | cut -c2-)
+fi
+if [ -n "$where" ]; then
+  line_no=${where##*:}
+  next="line $line_no:  $(sed -n "${line_no}p" "$file" | sed 's/^[[:space:]]*//')"
+elif [ -z "$next" ] && [ "$mode" = debug ] && [[ " 4 5 6 8 10 11 " == *" $sig "* ]]; then
+  next="Cmd+Shift+B > Sanitize may show the exact line"
+fi
+
+# ---------------------------------------------------------------- report
+
+if [ -s error.txt ]; then   # cerr, STL debug messages, sanitizer reports: the start here, the rest in error.txt
+  head -c 3000 error.txt
+  [ "$(wc -c < error.txt)" -gt 3000 ] && printf '\n... (more in error.txt)'
+  echo
+fi
+
+if [ "$verdict" != OK ] && [ -s debug.txt ] && { [ "$killed" != "-" ] || [ "$code" = 86 ] || [ "$sig" = 25 ]; }; then
+  echo "last debug lines:"; tail -n 4 debug.txt | cut -c1-200
+fi
+
+{
+  echo "----------------------------------------"
+  mem=''; [ "$peak_mb" -ge 1 ] && mem="  ·  ~${peak_mb} MB"
+  echo "[$mode] $file  ·  ${cpu} s CPU${mem}"
+  if [ "$verdict" = OK ]; then echo "✓ OK"; else echo "✗ $verdict"; fi
+  for w in ${why[@]+"${why[@]}"}; do echo "    • $w"; done
+  [ -n "$next" ] && echo "    → $next"
+} | tee info.txt
+[ "$verdict" = OK ]

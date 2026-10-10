@@ -1,0 +1,32 @@
+name: test
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  test:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Toolchain (Ubuntu)
+        if: runner.os == 'Linux'
+        run: sudo apt-get update -qq && sudo apt-get install -y -qq gdb
+
+      - name: Toolchain (macOS)
+        if: runner.os == 'macOS'
+        run: brew install gcc
+
+      - name: Install
+        run: ./install.sh
+
+      - name: Test
+        run: tests/test.sh
+        env:
+          # CI macOS runners can't attach lldb without an interactive prompt
+          SKIP_CRASH_LINE: ${{ runner.os == 'macOS' && '1' || '' }}

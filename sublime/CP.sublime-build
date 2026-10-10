@@ -1,0 +1,20 @@
+{
+  "shell_cmd": "\"${packages}/harly24-cp/cprun\" debug \"${file}\"",
+  "file_regex": "^(..[^:]*):([0-9]+):?([0-9]+)?:? (.*)$",
+  "working_dir": "${file_path}",
+  "selector": "source.c++",
+  "variants": [
+    {
+      "name": "Fast (-O2, judge-like timing)",
+      "shell_cmd": "\"${packages}/harly24-cp/cprun\" fast \"${file}\""
+    },
+    {
+      "name": "Sanitize (memory errors, exact line)",
+      "shell_cmd": "\"${packages}/harly24-cp/cprun\" san \"${file}\""
+    },
+    {
+      "name": "Stress (-O2, 60 s limit)",
+      "shell_cmd": "TL=60 \"${packages}/harly24-cp/cprun\" fast \"${file}\""
+    }
+  ]
+}

@@ -1,0 +1,17 @@
+<snippet>
+	<content><![CDATA[
+long long bitStringLSBFirstToNumber(const string &s) {
+    long long res = 0;
+    long long pow2 = 1;
+    for (char c : s) {
+        if (c == '1') res += pow2;
+        pow2 <<= 1;  // multiply by 2 for next bit
+    }
+    return res;
+}
+
+]]></content>
+	<tabTrigger>bitTonumber</tabTrigger>
+	<scope>source.c++</scope>
+	<description>LSB-first bit string -&gt; number</description>
+</snippet>

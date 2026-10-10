@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1032" height="230" viewBox="0 0 1032 230" font-family="'JetBrains Mono','SF Mono',Menlo,Consolas,'DejaVu Sans Mono',monospace" font-size="13.5">
+<defs><linearGradient id="g" x1="0" x2="1"><stop offset="0" stop-color="#bb9af7"/><stop offset="1" stop-color="#7dcfff"/></linearGradient></defs>
+<rect x=".5" y=".5" width="1031" height="229" rx="14" fill="#0f1117" stroke="#262b38"/>
+<rect x="40" y="0" width="120" height="3" fill="url(#g)"/>
+<text x="40" y="86" font-size="46" font-weight="700" fill="#eef1f8">harly24<tspan fill="url(#g)">-cp</tspan></text>
+<text x="42" y="122" font-size="16" fill="#5f6880">A Sublime Text workbench for competitive C++</text>
+<rect x="40" y="156" width="364" height="36" rx="8" fill="#151925" stroke="#262b38"/>
+<text x="54" y="179" font-size="13" xml:space="preserve"><tspan fill="#7dcfff">debug.h</tspan><tspan fill="#c9d1e1">  prints anything, survives crashes</tspan></text>
+<rect x="418" y="156" width="268" height="36" rx="8" fill="#151925" stroke="#262b38"/>
+<text x="432" y="179" font-size="13" xml:space="preserve"><tspan fill="#7dcfff">cprun</tspan><tspan fill="#c9d1e1">  a verdict for every run</tspan></text>
+<rect x="700" y="156" width="292" height="36" rx="8" fill="#151925" stroke="#262b38"/>
+<text x="714" y="179" font-size="13" xml:space="preserve"><tspan fill="#7dcfff">gen.h</tspan><tspan fill="#c9d1e1">  20 input formats, one call</tspan></text>
+</svg>

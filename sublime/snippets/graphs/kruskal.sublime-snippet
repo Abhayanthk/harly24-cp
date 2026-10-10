@@ -1,0 +1,27 @@
+<snippet>
+	<content><![CDATA[
+int kruskalsMST(int V, vector<vector<int>> &edges) {
+    
+    // Sort all edges
+    sort(edges.begin(), edges.end(), [](const vector<int>& a, const vector<int>& b) { return a[2] < b[2]; });
+    
+    // Traverse edges in sorted order
+    DSU dsu(V);
+    int cost = 0, count = 0;
+    
+    for (auto &e : edges) {
+        int x = e[0], y = e[1], w = e[2];
+        
+        // Make sure that there is no cycle
+        if (!dsu.isSame(x, y)) {
+            dsu.unionSet(x, y);
+            cost += w;
+            if (++count == V - 1) break;
+        }
+    }
+    return cost;
+}]]></content>
+	<tabTrigger>kruskalsMST</tabTrigger>
+	<scope>source.c++</scope>
+	<description>Kruskal MST on top of the dsu snippet</description>
+</snippet>

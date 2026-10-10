@@ -1,0 +1,17 @@
+<snippet>
+	<content><![CDATA[
+template <typename T>
+vector<T> makeUnique(vector<T> &vec) {
+    vector<T> temp;
+    unordered_map<T, long long> mp;
+    for (const auto &e : vec) {
+        if (mp[e]++ == 0) {
+            temp.push_back(e);
+        }
+    }
+    return temp;
+}]]></content>
+	<tabTrigger>makeUnique</tabTrigger>
+	<scope>source.c++</scope>
+	<description>Remove duplicates, keep first occurrences in order</description>
+</snippet>

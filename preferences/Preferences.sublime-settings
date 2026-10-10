@@ -1,0 +1,22 @@
+{
+	"font_size": 15,
+	"ignored_packages":
+	[
+		"Vintage",
+	],
+	"theme": "Monokai Pro (Filter Spectrum).sublime-theme",
+	"color_scheme": "Packages/Monokai Dark/Monokai Dark.tmTheme",
+	"font_face" : "Jetbrains Mono",
+	"highlight_line" : true,
+	"save_on_focus_lost":true,
+	"caret_style" : "phase",
+	"line_padding_top" : 6,
+	"line_padding_bottom" : 6,
+	"trim_trailing_white_space_on_save":true,
+
+	"index_files": false,
+	"smart_indent": false,
+
+
+
+}

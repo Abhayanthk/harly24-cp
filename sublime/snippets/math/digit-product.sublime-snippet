@@ -1,0 +1,14 @@
+<snippet>
+	<content><![CDATA[
+int digitMultiplication(int n) {
+    int mul = 1;
+    while (n) {
+        mul *= (n % 10);
+        n /= 10;
+    }
+    return mul;
+}]]></content>
+	<tabTrigger>digitMultiplication</tabTrigger>
+	<scope>source.c++</scope>
+	<description>Product of decimal digits</description>
+</snippet>

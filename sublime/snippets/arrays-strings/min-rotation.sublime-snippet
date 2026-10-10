@@ -1,0 +1,35 @@
+<snippet>
+	<content><![CDATA[
+//! Gives lexicographically smallest array rotaion using Booth's Algorithm in O(n)
+vector<int> lexicographically_smallest_array(vector<int>& arr) {
+    int n = arr.size();
+    vector<int> s = arr;
+    s.insert(s.end(), arr.begin(), arr.end());
+ 
+    vector<int> f(2 * n, -1);
+    int k = 0;
+ 
+    for (int j = 1; j < 2 * n; ++j) {
+        int c = s[j];
+        int i = f[j - k - 1];
+ 
+        while (i != -1 && c != s[k + i + 1]) {
+            if (c < s[k + i + 1]) k = j - i - 1;
+            i = f[i];
+        }
+        if (c != s[k + i + 1]) {
+            if (c < s[k]) k = j;
+            f[j - k] = -1;
+        } else {
+            f[j - k] = i + 1;
+        }
+    }
+ 
+    return vector<int>(s.begin() + k, s.begin() + k + n);
+}
+
+]]></content>
+	<tabTrigger>smallestArrayRotationUsingBooth'sAlgo</tabTrigger>
+	<scope>source.c++</scope>
+	<description>Lexicographically smallest rotation (Booth, O(n))</description>
+</snippet>

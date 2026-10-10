@@ -1,0 +1,11 @@
+<snippet>
+	<content><![CDATA[
+	clock_t start = clock();
+    clock_t end = clock();
+
+    cout << "Time taken: " << fixed << setprecision(6)<< (double)(end - start) / CLOCKS_PER_SEC << " seconds" << endl;
+]]></content>
+	<tabTrigger>time</tabTrigger>
+	<scope>source.c++</scope>
+	<description>Time a block with clock()</description>
+</snippet>

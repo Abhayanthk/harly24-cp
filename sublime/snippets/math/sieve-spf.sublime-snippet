@@ -1,0 +1,38 @@
+<snippet>
+	<content><![CDATA[
+const int N = 1e6 + 5;
+int spf[N]; // Smallest prime factor
+
+void build_spf() {
+    for (int i = 2; i < N; i++) spf[i] = i;
+    for (int i = 2; i * i < N; i++) {
+        if (spf[i] == i) {
+            for (int j = i * i; j < N; j += i)
+                if (spf[j] == j) spf[j] = i;
+        }
+    }
+}
+
+vi get_unique_prime_factors(int x) {
+    vi res;
+    while (x != 1) {
+        int f = spf[x];
+        res.pb(f);
+        while (x % f == 0) x /= f;
+    }
+    return res;
+}
+vector<int> get_prime_factors(int num) {
+    vector<int> factors;
+    while (num != 1) {
+        factors.push_back(spf[num]);
+        num /= spf[num];  // Reduce num
+    }
+    return factors;
+}
+
+]]></content>
+	<tabTrigger>seive_spf</tabTrigger>
+	<scope>source.c++</scope>
+	<description>Smallest-prime-factor sieve for fast factorization</description>
+</snippet>

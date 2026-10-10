@@ -1,0 +1,17 @@
+<snippet>
+	<content><![CDATA[
+inline long long safe_power(long long base, int exp) {
+    long long result = 1;
+    for (int i = 0; i < exp; i++) {
+        if (base != 0 && llabs(result) > LLONG_MAX / llabs(base)) {
+            return -1; // Indicate overflow
+        }
+        result *= base;
+    }
+    return result;
+}
+]]></content>
+	<tabTrigger>powerSafe</tabTrigger>
+	<scope>source.c++</scope>
+	<description>Power that returns -1 instead of overflowing</description>
+</snippet>

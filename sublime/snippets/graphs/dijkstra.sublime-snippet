@@ -1,0 +1,33 @@
+<snippet>
+	<content><![CDATA[
+
+vector<long long> dijkstra(int n, int src, vector<vector<pair<int,int>>> &adj) {
+    const long long INF = 2e18;
+    vector<long long> dist(n, INF);
+    priority_queue<pair<long long,int>, vector<pair<long long,int>>, greater<>> pq;
+
+    dist[src] = 0;
+    pq.push({0, src});
+
+    while (!pq.empty()) {
+        auto [d, u] = pq.top();
+        pq.pop();
+
+        if (d != dist[u]) continue; // skip outdated entries
+
+        for (auto [v, w] : adj[u]) {
+            if (dist[v] > d + w) {
+                dist[v] = d + w;
+                pq.push({dist[v], v});
+            }
+        }
+    }
+
+    return dist;
+}
+
+]]></content>
+	<tabTrigger>dijkstra</tabTrigger>
+	<scope>source.c++</scope>
+	<description>Dijkstra with a min-heap, skips stale entries</description>
+</snippet>

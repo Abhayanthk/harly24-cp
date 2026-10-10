@@ -1,0 +1,43 @@
+<snippet>
+	<content><![CDATA[
+
+#include <bits/stdc++.h>
+#include "AutoTimer.h"
+
+using namespace std;
+
+int main()
+{
+AutoTimer timer; // starts timing
+ios::sync_with_stdio(false);cin.tie(0);
+  cout << "Hello Wrold\n";   
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+]]></content>
+	<tabTrigger>test</tabTrigger>
+	<scope>source.c++</scope>
+	<description>Hello-world with AutoTimer</description>
+</snippet>

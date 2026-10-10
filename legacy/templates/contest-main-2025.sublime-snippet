@@ -1,0 +1,118 @@
+<snippet>
+	<content><![CDATA[
+/*        ,@@@@@@@,
+    ,,,.   ,@@@@@@/@@,  .oo8888o.
+ ,&%%&%&&%,@@@@@/@@@@@@,8888\88/8o
+,%&\%&&%&&%,@@@\@@@/@@@88\88888/88'
+%&&%&%&/%&&%@@\@@/ /@@@88888\88888'
+%&&%/ %&%%&&@@\ V /@@' `88\8 `/88'
+`&%\ ` /%&'    |.|        \ '|8'
+    |o|        | |         | |
+    |.|        | |         | |
+ \/ ._\//_/__/  ,\_//__\/.  \_//__/_
+ */
+
+
+#include <bits/stdc++.h>
+using namespace std;
+
+// ════════════════════════════════════════════════════════════════════════
+//                          DEBUG & TIMING
+// ════════════════════════════════════════════════════════════════════════
+#ifdef LOCAL
+    #include "AutoTimer.h"
+    #include "debug.h"
+    #define _FASTIO_LOCAL()  AutoTimer timer;
+#else
+    #define debug(...)       ;
+    #define _FASTIO_LOCAL()  ;
+#endif
+
+// ════════════════════════════════════════════════════════════════════════
+//                           FAST I/O SETUP
+// ════════════════════════════════════════════════════════════════════════
+#define fastIO                           \
+    ios::sync_with_stdio(false);         \
+    cin.tie(nullptr);                    \
+    cout.tie(nullptr);                   \
+    cout.precision(numeric_limits<double>::max_digits10); \
+    _FASTIO_LOCAL()
+
+// ══════════════════════════════════════════════════════════════════
+//                           COMMON MACROS
+// ══════════════════════════════════════════════════════════════════
+
+#define PI                              3.141592653589793238462
+#define pb                              push_back
+#define vi                              vector<int>
+#define vp                              vector<pair<int, int>>
+#define fi                              first
+#define sec                             second
+#define vii                             vector<vector<int>>
+#define int                             long long
+#define inf                             LLONG_MAX
+#define endl                            "\n"
+#define line                            cout << endl
+#define sz(a)                           ((int)a.size())
+#define neginf                          LLONG_MIN
+#define Min(a)                          *min_element(a.begin(), a.end())
+#define Max(a)                          *max_element(a.begin(), a.end())
+#define all(v)                          v.begin(), v.end()
+#define double                          long double
+#define input(v)                        for(int i = 0; i < sz(v); i++) cin >> v[i]
+#define printf(v)                       for(auto x: v) cout << x << " "
+#define lcm(a, b)                       ((a * b) / gcd(a, b))
+#define nfor(i,a,b)                     for(int i = a; i < b; i++)
+#define rfor(i,a,b)                     for(int i = a; i >= b; i--)
+
+// ══════════════════════════════════════════════════════════════════
+//                    Builtin Bit Functions
+// ══════════════════════════════════════════════════════════════════
+// __builtin_clz(x)    → leading zeros
+// __builtin_ctz(x)    → trailing zeros
+// __builtin_popcount(x) → count of 1-bits
+// __builtin_parity(x) → 1 if #bits is odd, 0 if even
+
+int n;
+vi v, f, g, res;
+vii adj, dp;
+
+void Harly24()
+{
+    cin >> n;
+    v.assign(n,0);
+}
+
+int32_t main()
+{
+    fastIO
+    int t; cin >> t; while(t--) Harly24();
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+]]></content>
+	<tabTrigger>CPPold</tabTrigger>
+	<scope>source.c++</scope>
+	<description>2025 contest template</description>
+</snippet>

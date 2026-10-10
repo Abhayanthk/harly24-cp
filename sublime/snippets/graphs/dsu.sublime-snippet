@@ -1,0 +1,24 @@
+<snippet>
+	<content><![CDATA[
+class DSU{
+	private: vector<int> p,rank;
+	public:
+		DSU(int n){
+			p.assign(n,0);  rank.assign(n, 0);
+			iota(p.begin(), p.end(), 0);
+		}
+		int findSet(int i){return p[i] == i ? p[i] : p[i] = findSet(p[i]);} // path compression
+		bool isSame(int a, int b) {return findSet(a) == findSet(b);}
+		void unionSet(int a, int b){
+			if(!isSame(a, b)){
+				a = findSet(a); b = findSet(b);
+				if(rank[a] < rank[b]) swap(a, b); // union by rank
+				p[b] = a;
+				if(rank[a] == rank[b]) rank[a]++;
+			}
+		}
+};]]></content>
+	<tabTrigger>dsu</tabTrigger>
+	<scope>source.c++</scope>
+	<description>Disjoint set union: path compression + union by rank</description>
+</snippet>

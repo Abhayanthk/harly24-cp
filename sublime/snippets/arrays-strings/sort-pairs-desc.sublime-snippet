@@ -1,0 +1,10 @@
+<snippet>
+	<content><![CDATA[
+	sort(all(nodes), [](pair<int, int> &a, pair<int, int> &b) {
+	    return a.first > b.first;
+		});
+]]></content>
+	<tabTrigger>pair_sort_decending</tabTrigger>
+	<scope>source.c++</scope>
+	<description>Sort pairs by first, descending</description>
+</snippet>

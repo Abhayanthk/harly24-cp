@@ -1,0 +1,14 @@
+<snippet>
+	<content><![CDATA[
+int digitSum(int n) {
+    int sum = 0;
+    while (n) {
+        sum += n % 10;
+        n /= 10;
+    }
+    return sum;
+}]]></content>
+	<tabTrigger>digitSum</tabTrigger>
+	<scope>source.c++</scope>
+	<description>Sum of decimal digits</description>
+</snippet>

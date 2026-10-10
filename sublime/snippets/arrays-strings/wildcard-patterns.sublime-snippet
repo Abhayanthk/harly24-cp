@@ -1,0 +1,18 @@
+<snippet>
+	<content><![CDATA[
+// build pattern -> list of word indices
+unordered_map<string, vector<int>> patterns;
+auto addPatterns = [&](const string& w, int idx) {
+    string p = w;
+    for (int j = 0; j < _; j++) {
+        char orig = p[j];
+        p[j] = '*';
+        patterns[p].push_back(idx);
+        p[j] = orig;
+    }
+};
+]]></content>
+	<tabTrigger>wildcardPattern</tabTrigger>
+	<scope>source.c++</scope>
+	<description>Word -&gt; wildcard pattern buckets (word ladder style)</description>
+</snippet>

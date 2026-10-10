@@ -1,0 +1,39 @@
+<snippet>
+	<content><![CDATA[
+ShortCuts
+-> Next Occurence -> cmd + D
+-> All Occurence -> cmd + crtl + G
+
+- smallestArrayRotation
+- combinationUsingFermatsTheorm
+- modularOperaton
+- debuggingNormal
+- debuggingAdvanced
+- digitsum
+- digitMultiplication
+- primeFactoristaion
+- seive
+- seive_spf
+- isSaquare
+- makeUnique
+- powerNormal
+- powerMode
+- powerSafe
+- modularoperaton
+- multiset
+- pair_sort_decending
+- factors
+- ordered_set_PD_DS
+- bitForm -> number to bit
+-
+- bit_functions
+- quemax
+- quemin
+- bitTonumber
+- issorted
+- binaryLiftinttree
+]]></content>
+	<tabTrigger>snippetList</tabTrigger>
+	<scope>source.c++</scope>
+	<description>Hand-kept list of snippets (now docs/snippets.md)</description>
+</snippet>

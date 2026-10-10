@@ -1,0 +1,48 @@
+<snippet>
+	<content><![CDATA[
+const int MOD = 1e9 + 7;
+const int N = 2e5 + 100;  // Max limit for factorial (nCr(2n, n) needs 2n here)
+
+long long fact[N + 1], invFact[N + 1];
+
+long long power(long long base, long long exp, long long mod) {
+    long long res = 1;
+    base %= mod;
+    if (base < 0) base += mod;
+    while (exp > 0) {
+        if (exp % 2 == 1) res = (res * base) % mod;
+        base = (base * base) % mod;
+        exp >>= 1;
+    }
+    return res;
+}
+
+// Call precompute() once at the start of main, or every nCr is 0.
+void precompute() {
+    fact[0] = invFact[0] = 1;
+    for (int i = 1; i <= N; i++) {
+        fact[i] = fact[i - 1] * i % MOD;
+    }
+    invFact[N] = power(fact[N], MOD - 2, MOD);  // Fermat’s theorem
+    for (int i = N - 1; i > 0; i--) {
+        invFact[i] = invFact[i + 1] * (i + 1) % MOD;
+    }
+}
+
+// Compute nCr % MOD
+long long nCr(int n, int r) {
+    if (r < 0 || r > n) return 0;
+    assert(n <= N);
+    return fact[n] * invFact[r] % MOD * invFact[n - r] % MOD;
+}
+
+// Compute nPr % MOD
+long long nPr(int n, int r) {
+    if (r < 0 || r > n) return 0;
+    assert(n <= N);
+    return fact[n] * invFact[n - r] % MOD;
+}]]></content>
+	<tabTrigger>combinationUsingFermatsTheorem</tabTrigger>
+	<scope>source.c++</scope>
+	<description>nCr / nPr mod p with factorials and Fermat inverses</description>
+</snippet>

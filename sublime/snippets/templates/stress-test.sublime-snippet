@@ -1,0 +1,94 @@
+<snippet>
+	<content><![CDATA[
+
+#include <bits/stdc++.h>
+
+#ifdef LOCAL
+#include "AllHeaders.h"
+#else
+#define debug(...)       ;
+#define _FASTIO_LOCAL()  ;
+#endif
+
+#define fastIO \
+ios::sync_with_stdio(false); cin.tie(nullptr); cout.tie(nullptr);\
+cout.precision(numeric_limits<double>::max_digits10); _FASTIO_LOCAL()
+
+using namespace std;
+
+#define PI                              3.141592653589793238462
+#define pb                              push_back
+#define vi                              vector<int>
+#define vp                              vector<pair<int, int>>
+#define fi                              first
+#define sec                             second
+#define vii                             vector<vector<int>>
+#define int                             long long
+#define inf                             LLONG_MAX
+#define endl                            "\n"
+#define line                            cout << endl
+#define sz(a)                           ((int)a.size())
+#define neginf                          LLONG_MIN
+#define Min(a)                          *min_element(a.begin(), a.end())
+#define Max(a)                          *max_element(a.begin(), a.end())
+#define all(v)                          v.begin(), v.end()
+#define double                          long double
+#define input(v)                        for(int i = 0; i < sz(v); i++) cin >> v[i]
+#define printf(v)                       for(auto x: v) cout << x << " "
+#define lcm(a, b)                       ((a) / gcd((a), (b)) * (b))
+#define nfor(i,a,b)                     for(int i = a; i < b; i++)
+#define rfor(i,a,b)                     for(int i = a; i >= b; i--)
+
+mt19937 rng(random_device{}());
+int makeNumber(int L, int R) {
+    uniform_int_distribution<int> dist(L, R);
+    return dist(rng);
+}
+vi makeArray(int n, int L, int R){
+    vi temp(n);
+    uniform_int_distribution<int> dist(L, R);
+    for(int i = 0; i < n; i++){
+        temp[i] = dist(rng);
+    }
+    return temp;
+}
+struct Test { int n; vi a; };
+
+Test gen() {
+    Test t;
+    t.n = makeNumber(1, 8);
+    t.a = makeArray(t.n, 1, 10);
+    return t;
+}
+
+void printTest(const Test& t) {
+    cout << t.n << endl;
+    for (auto x : t.a) cout << x << " ";
+    cout << endl;
+}
+
+int brute(const Test& t) {
+}
+
+int fastSolve(const Test& t) {
+}
+
+int32_t main() {
+    fastIO
+    for (int test = 1; test <= 100000; test++) {
+        Test t = gen();
+        int aa = brute(t), bb = fastSolve(t);
+        if (aa != bb) {
+            cout << "Mismatch on test " << test << "\n";
+            printTest(t);
+            cout << "Brute = " << aa << "\nFast  = " << bb << "\n";
+            return 0;
+        }
+    }
+    cout << "No mismatches found\n";
+}
+]]></content>
+	<tabTrigger>stressTesting</tabTrigger>
+	<scope>source.c++</scope>
+	<description>Stress test: random small tests, brute vs fast, stop at the first mismatch</description>
+</snippet>

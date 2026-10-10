@@ -1,0 +1,10 @@
+<snippet>
+	<content><![CDATA[
+bool isSquareRoot(int n) {
+    int x = (int)sqrt(n);
+    return (x * x == n);
+}]]></content>
+	<tabTrigger>isSaquare</tabTrigger>
+	<scope>source.c++</scope>
+	<description>Perfect-square check</description>
+</snippet>

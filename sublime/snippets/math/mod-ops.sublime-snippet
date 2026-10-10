@@ -1,0 +1,29 @@
+<snippet>
+	<content><![CDATA[
+//* Modular Addition
+long long mod_add(long long a, long long b) {
+    return ((a % MOD) + (b % MOD)) % MOD;
+}
+ 
+//* Modular Subtraction
+long long mod_sub(long long a, long long b) {
+    return ((a % MOD) - (b % MOD) + MOD) % MOD;
+}
+ 
+//* Modular Division (using Modular Inverse)
+long long mod_inv(long long a, long long m = MOD) {
+    return power(a, m - 2, m);  // Fermat's Little Theorem
+}
+//* Modular Multiplication
+long long mod_mul(long long a, long long b) {
+    return ((a % MOD) * (b % MOD)) % MOD;
+}
+
+long long mod_div(long long a, long long b) {
+    return mod_mul(a, mod_inv(b));
+}
+]]></content>
+	<tabTrigger>modularOperaton</tabTrigger>
+	<scope>source.c++</scope>
+	<description>Modular add, sub, mul, inverse, div</description>
+</snippet>

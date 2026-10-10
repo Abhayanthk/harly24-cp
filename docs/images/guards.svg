@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="760" height="722" viewBox="0 0 760 722" font-family="'JetBrains Mono','SF Mono',Menlo,Consolas,'DejaVu Sans Mono',monospace" font-size="13.5">
+<rect x="0.5" y="0.5" width="759" height="173" rx="10" fill="#0f1117" stroke="#262b38"/><circle cx="20" cy="18" r="5.5" fill="#ff5f57"/><circle cx="38" cy="18" r="5.5" fill="#febc2e"/><circle cx="56" cy="18" r="5.5" fill="#28c840"/><line x1="0" y1="36" x2="760" y2="36" stroke="#1b1f2b"/><text x="380.0" y="22" fill="#5f6880" font-size="12" text-anchor="middle">endless loop</text>
+<text x="22" y="66" xml:space="preserve"><tspan fill="#bb9af7">[debug] </tspan><tspan fill="#eef1f8">demo.cpp</tspan><tspan fill="#5f6880">  ·  4.45 s CPU  ·  ~8 MB</tspan></text>
+<text x="22" y="88" xml:space="preserve"><tspan fill="#f7768e">✗ TLE: killed after 5 s</tspan></text>
+<text x="22" y="110" xml:space="preserve"><tspan fill="#5f6880">    • </tspan><tspan fill="#c9d1e1">endless loop (a while/for whose condition never turns false)</tspan></text>
+<text x="22" y="132" xml:space="preserve"><tspan fill="#5f6880">    • </tspan><tspan fill="#c9d1e1">or the code reads more input than input.txt has</tspan></text>
+<text x="22" y="154" xml:space="preserve"><tspan fill="#e0af68">    → </tspan><tspan fill="#e0af68">slow but finite? put a max-size test in input.txt and use the Fast variant</tspan></text>
+<rect x="0.5" y="190.5" width="759" height="239" rx="10" fill="#0f1117" stroke="#262b38"/><circle cx="20" cy="208" r="5.5" fill="#ff5f57"/><circle cx="38" cy="208" r="5.5" fill="#febc2e"/><circle cx="56" cy="208" r="5.5" fill="#28c840"/><line x1="0" y1="226" x2="760" y2="226" stroke="#1b1f2b"/><text x="380.0" y="212" fill="#5f6880" font-size="12" text-anchor="middle">debug() inside an endless loop</text>
+<text x="22" y="256" xml:space="preserve"><tspan fill="#5f6880">last debug lines:</tspan></text>
+<text x="22" y="278" xml:space="preserve"><tspan fill="#5f6880">[main:89] </tspan><tspan fill="#7dcfff">i</tspan><tspan fill="#5f6880"> = </tspan><tspan fill="#c9d1e1">0</tspan><tspan fill="#5f6880"> | </tspan><tspan fill="#7dcfff">steps</tspan><tspan fill="#5f6880"> = </tspan><tspan fill="#c9d1e1">9998</tspan></text>
+<text x="22" y="300" xml:space="preserve"><tspan fill="#5f6880">[main:89] </tspan><tspan fill="#7dcfff">i</tspan><tspan fill="#5f6880"> = </tspan><tspan fill="#c9d1e1">2</tspan><tspan fill="#5f6880"> | </tspan><tspan fill="#7dcfff">steps</tspan><tspan fill="#5f6880"> = </tspan><tspan fill="#c9d1e1">9999</tspan></text>
+<text x="22" y="322" xml:space="preserve"><tspan fill="#5f6880">[main:89] </tspan><tspan fill="#7dcfff">i</tspan><tspan fill="#5f6880"> = </tspan><tspan fill="#c9d1e1">0</tspan><tspan fill="#5f6880"> | </tspan><tspan fill="#7dcfff">steps</tspan><tspan fill="#5f6880"> = </tspan><tspan fill="#c9d1e1">10000</tspan></text>
+<text x="22" y="344" xml:space="preserve"><tspan fill="#bb9af7">[debug] </tspan><tspan fill="#eef1f8">demo.cpp</tspan><tspan fill="#5f6880">  ·  0.04 s CPU  ·  ~8 MB</tspan></text>
+<text x="22" y="366" xml:space="preserve"><tspan fill="#f7768e">✗ Stopped: debug() flooded</tspan></text>
+<text x="22" y="388" xml:space="preserve"><tspan fill="#5f6880">    • </tspan><tspan fill="#c9d1e1">almost always an endless loop</tspan></text>
+<text x="22" y="410" xml:space="preserve"><tspan fill="#5f6880">    • </tspan><tspan fill="#c9d1e1">the last debug lines above show the state it repeats</tspan></text>
+<rect x="0.5" y="446.5" width="759" height="151" rx="10" fill="#0f1117" stroke="#262b38"/><circle cx="20" cy="464" r="5.5" fill="#ff5f57"/><circle cx="38" cy="464" r="5.5" fill="#febc2e"/><circle cx="56" cy="464" r="5.5" fill="#28c840"/><line x1="0" y1="482" x2="760" y2="482" stroke="#1b1f2b"/><text x="380.0" y="468" fill="#5f6880" font-size="12" text-anchor="middle">push_back forever</text>
+<text x="22" y="512" xml:space="preserve"><tspan fill="#bb9af7">[debug] </tspan><tspan fill="#eef1f8">demo.cpp</tspan><tspan fill="#5f6880">  ·  0.79 s CPU  ·  ~1024 MB</tspan></text>
+<text x="22" y="534" xml:space="preserve"><tspan fill="#f7768e">✗ Memory guard: killed above 1024 MB</tspan></text>
+<text x="22" y="556" xml:space="preserve"><tspan fill="#5f6880">    • </tspan><tspan fill="#c9d1e1">push_back / insert inside an endless loop</tspan></text>
+<text x="22" y="578" xml:space="preserve"><tspan fill="#5f6880">    • </tspan><tspan fill="#c9d1e1">or an array far too big (Codeforces usually allows 256 MB)</tspan></text>
+<rect x="0.5" y="614.5" width="759" height="107" rx="10" fill="#0f1117" stroke="#262b38"/><circle cx="20" cy="632" r="5.5" fill="#ff5f57"/><circle cx="38" cy="632" r="5.5" fill="#febc2e"/><circle cx="56" cy="632" r="5.5" fill="#28c840"/><line x1="0" y1="650" x2="760" y2="650" stroke="#1b1f2b"/><text x="380.0" y="636" fill="#5f6880" font-size="12" text-anchor="middle">DFS 1,000,000 deep</text>
+<text x="22" y="680" xml:space="preserve"><tspan fill="#bb9af7">[debug] </tspan><tspan fill="#eef1f8">demo.cpp</tspan><tspan fill="#5f6880">  ·  0.02 s CPU</tspan></text>
+<text x="22" y="702" xml:space="preserve"><tspan fill="#9ece6a">✓ OK</tspan></text>
+</svg>

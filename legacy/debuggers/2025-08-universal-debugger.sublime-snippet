@@ -1,0 +1,136 @@
+<snippet>
+	<content><![CDATA[
+ofstream debug_out("debug.txt");
+
+// --- BASE PRINT FUNCTIONS ---
+void dbg_print(int x) { debug_out << x; }
+// void dbg_print(long x) { debug_out << x; }
+// void dbg_print(long long x) { debug_out << x; }
+void dbg_print(unsigned x) { debug_out << x; }
+void dbg_print(unsigned long x) { debug_out << x; }
+void dbg_print(unsigned long long x) { debug_out << x; }
+void dbg_print(float x) { debug_out << x; }
+void dbg_print(double x) { debug_out << x; }
+// void dbg_print(long double x) { debug_out << x; }
+void dbg_print(char x) { debug_out << '\'' << x << '\''; }
+void dbg_print(const char *x) { debug_out << '"' << x << '"'; }
+void dbg_print(const string &x) { debug_out << '"' << x << '"'; }
+void dbg_print(bool x) { debug_out << (x ? "true" : "false"); }
+
+// --- STL CONTAINERS ---
+template <typename T, typename U>
+void dbg_print(const pair<T, U> &x) {
+    debug_out << "("; dbg_print(x.first); debug_out << ", "; dbg_print(x.second); debug_out << ")";
+}
+
+template <typename... T>
+void dbg_print(const tuple<T...> &t) {
+    debug_out << "(";
+    apply([](const auto&... args) {
+        size_t n = 0;
+        ((debug_out << (n++ ? ", " : ""), dbg_print(args)), ...);
+    }, t);
+    debug_out << ")";
+}
+
+template <typename T>
+void dbg_print(const vector<T> &x) {
+    debug_out << "[";
+    for (size_t i = 0; i < x.size(); i++) {
+        dbg_print(x[i]);
+        if (i + 1 < x.size()) debug_out << ", ";
+    }
+    debug_out << "]";
+}
+
+template <typename T>
+void dbg_print(const set<T> &x) {
+    debug_out << "{";
+    for (auto it = x.begin(); it != x.end();) {
+        dbg_print(*it);
+        if (++it != x.end()) debug_out << ", ";
+    }
+    debug_out << "}";
+}
+
+template <typename T>
+void dbg_print(const multiset<T> &x) {
+    debug_out << "{";
+    for (auto it = x.begin(); it != x.end();) {
+        dbg_print(*it);
+        if (++it != x.end()) debug_out << ", ";
+    }
+    debug_out << "}";
+}
+
+template <typename K, typename V>
+void dbg_print(const map<K, V> &x) {
+    debug_out << "{";
+    for (auto it = x.begin(); it != x.end();) {
+        dbg_print(it->first);
+        debug_out << ": ";
+        dbg_print(it->second);
+        if (++it != x.end()) debug_out << ", ";
+    }
+    debug_out << "}";
+}
+
+template <typename K, typename V>
+void dbg_print(const unordered_map<K, V> &x) {
+    debug_out << "{";
+    for (auto it = x.begin(); it != x.end();) {
+        dbg_print(it->first);
+        debug_out << ": ";
+        dbg_print(it->second);
+        if (++it != x.end()) debug_out << ", ";
+    }
+    debug_out << "}";
+}
+
+template <typename T>
+void dbg_print(const unordered_set<T> &x) {
+    debug_out << "{";
+    for (auto it = x.begin(); it != x.end();) {
+        dbg_print(*it);
+        if (++it != x.end()) debug_out << ", ";
+    }
+    debug_out << "}";
+}
+
+// --- VARIADIC DEBUG ---
+template <typename T>
+void _dbg_one(const char* name, const T &value) {
+    debug_out << name << " = ";
+    dbg_print(value);
+}
+
+template <typename T, typename... V>
+void _dbg_names(const char* names, const T &t, const V&... v) {
+    const char* comma = strchr(names, ',');
+    if (!comma) {
+        _dbg_one(names, t);
+        if constexpr(sizeof...(v)) { debug_out << " | "; _dbg_names(names, v...); }
+        return;
+    }
+    string varname(names, comma - names);
+    while (!varname.empty() && isspace(varname.back())) varname.pop_back();
+    while (!varname.empty() && isspace(varname.front())) varname.erase(varname.begin());
+
+    _dbg_one(varname.c_str(), t);
+    if constexpr(sizeof...(v)) {
+        debug_out << " | ";
+        _dbg_names(comma + 1, v...);
+    }
+}
+
+#define DEBUG 1
+#if DEBUG
+    #define debug(...) do { debug_out << "DEBUG : "; _dbg_names(#__VA_ARGS__, __VA_ARGS__); debug_out << "\n"; } while(0)
+#else
+    #define debug(...)
+#endif
+]]></content>
+	<tabTrigger>universalDebugger</tabTrigger>
+	<scope>source.c++</scope>
+	<description>Debugger v3: dbg_print overloads per type</description>
+</snippet>

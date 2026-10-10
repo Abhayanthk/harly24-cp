@@ -1,0 +1,47 @@
+<snippet>
+	<content><![CDATA[
+// ─── Topological Sort — Kahn's Algorithm (BFS) ──────────────────
+// Use when: you also need cycle detection or want level-order topo
+// Returns empty vector if cycle detected
+#include <bits/stdc++.h>
+using namespace std;
+
+vector<int> topoSort(int n, vector<vector<int>>& adj) {
+    vector<int> indegree(n + 1, 0);
+
+    // Count in-degrees
+    for (int u = 1; u <= n; u++)
+        for (int v : adj[u])
+            indegree[v]++;
+
+    queue<int> q;
+    for (int i = 1; i <= n; i++)
+        if (indegree[i] == 0) q.push(i);  // all source nodes
+
+    vector<int> order;
+    while (!q.empty()) {
+        int u = q.front(); q.pop();
+        order.push_back(u);
+        for (int v : adj[u]) {
+            if (--indegree[v] == 0)
+                q.push(v);
+        }
+    }
+
+    // If order.size() != n, the graph has a cycle
+    if ((int)order.size() != n) return {};
+    return order;
+}
+
+// Usage:
+//   int n = 5;                          // nodes 1..n
+//   vector<vector<int>> adj(n + 1);
+//   adj[u].push_back(v);                // directed edge u → v
+//   vector<int> res = topoSort(n, adj);
+//   if (res.empty()) cout << "Cycle!\n";
+//   else for (int x : res) cout << x << " ";
+]]></content>
+	<tabTrigger>topoSort</tabTrigger>
+	<scope>source.c++</scope>
+	<description>Kahn&#x27;s topological sort with cycle detection</description>
+</snippet>

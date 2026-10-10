@@ -1,0 +1,15 @@
+<snippet>
+	<content><![CDATA[
+vi bitform(long long n, int bits = 64) {
+    vi temp(bits, 0);
+    for(int i = 0; i < 64 && (1LL << i) <= n; i++){
+        if(n & (1LL << i))
+            temp[i] = 1;
+    }
+    return temp;
+}
+]]></content>
+	<tabTrigger>bitForm</tabTrigger>
+	<scope>source.c++</scope>
+	<description>Number -&gt; bit vector</description>
+</snippet>

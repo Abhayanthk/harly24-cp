@@ -1,0 +1,9 @@
+{
+    // Lint C++ with the same GCC as the build (plain g++ on this Mac is Apple clang, which knows no pb_ds).
+    "linters": {
+        "g++": {
+            "executable": "/opt/homebrew/bin/g++-15",
+            "args": ["-c", "-Wall", "-O0", "-std=c++23", "-mmacosx-version-min=26.0"]
+        }
+    }
+}

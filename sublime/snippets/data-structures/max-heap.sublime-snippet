@@ -1,0 +1,8 @@
+<snippet>
+	<content><![CDATA[
+priority_queue <int>
+]]></content>
+	<tabTrigger>quemax</tabTrigger>
+	<scope>source.c++</scope>
+	<description>priority_queue max-heap</description>
+</snippet>

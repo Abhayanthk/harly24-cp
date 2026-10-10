@@ -1,0 +1,14 @@
+{
+	// Packages this setup uses. Copy into Packages/User on a fresh install; Package Control installs them on restart.
+	"installed_packages":
+	[
+		"All Autocomplete",
+		"BracketHighlighter",
+		"Monokai Dark",
+		"Package Control",
+		"SublimeAStyleFormatter",
+		"SublimeLinter",
+		"SublimeLinter-gcc",
+		"Theme - Monokai Pro",
+	],
+}
