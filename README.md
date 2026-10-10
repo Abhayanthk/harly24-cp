@@ -92,13 +92,13 @@ You need three things:
 | A debugger, for the crash line | `xcode-select --install` | `sudo apt install gdb` |
 | Sublime Text 4 (optional: `cprun` works from any terminal) | [sublimetext.com](https://www.sublimetext.com) | same |
 
-Then:
+Then one line:
 
 ```bash
-git clone https://github.com/Abhayanthk/harly24-cp.git
-cd harly24-cp
-./install.sh
+curl -fsSL https://raw.githubusercontent.com/Abhayanthk/harly24-cp/main/get.sh | bash
 ```
+
+It downloads the latest release into `~/.harly24-cp` and runs its `install.sh`. Run the same line again to update. Options go after `bash -s --`, for example `... | bash -s -- --with-prefs`. To change the setup itself, clone it instead and run `./install.sh` from the clone.
 
 **What `install.sh` does.** It copies nothing into system folders and installs nothing. It makes four links back into the clone:
 
@@ -140,7 +140,7 @@ A `missing` line names the command that installs what's missing.
 | `--with-prefs` | also link my Sublime preferences, keymap and mousemap ([what's in them](docs/sublime.md)) |
 | `--uninstall` | remove every link the installer made; your files and the backups stay |
 
-Because everything is a link, `git pull` updates the whole setup at once.
+Because everything is a link, updating (the one-liner again, or `git pull` in a clone) changes the whole setup at once. To remove it: `~/.harly24-cp/install.sh --uninstall`, then delete `~/.harly24-cp`.
 
 <br>
 
@@ -183,7 +183,8 @@ harly24-cp
 ├── tests/                test.sh and its expected output
 ├── docs/                 reference pages, and the renderer behind every image here
 ├── legacy/               the five debuggers that came before
-└── install.sh
+├── install.sh            links everything in; --uninstall takes it out
+└── get.sh                the one-line installer
 ```
 
 The images in this README are not screenshots. [docs/tools/render.py](docs/tools/render.py) runs the demos through cprun and draws what they print.
