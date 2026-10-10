@@ -84,11 +84,15 @@ All formats and recipes: [docs/generator.md](docs/generator.md).
 
 ## Install
 
+You need three things:
+
 | | macOS | Linux, WSL |
 | --- | --- | --- |
-| Compiler | `brew install gcc` | `sudo apt install g++` |
-| Crash line | `xcode-select --install` (lldb) | `sudo apt install gdb` |
-| Editor | [Sublime Text 4](https://www.sublimetext.com) | Sublime Text 4 |
+| GCC, the judge's compiler | `brew install gcc` | `sudo apt install g++` |
+| A debugger, for the crash line | `xcode-select --install` | `sudo apt install gdb` |
+| Sublime Text 4 (optional: `cprun` works from any terminal) | [sublimetext.com](https://www.sublimetext.com) | same |
+
+Then:
 
 ```bash
 git clone https://github.com/Abhayanthk/harly24-cp.git
@@ -96,11 +100,47 @@ cd harly24-cp
 ./install.sh
 ```
 
-1. In Sublime: **Tools > Build System > CP**.
-2. Open `~/Documents/CPP/demo.cpp` (`~/cp` on Linux) and press **Cmd+B**. Change `DEMO` to see every verdict.
-3. In a new `.cpp` file, type `CPP` and press **Tab** for the contest template.
+**What `install.sh` does.** It copies nothing into system folders and installs nothing. It makes four links back into the clone:
 
-Everything the installer creates is a symlink back into the clone, so `git pull` updates the whole setup, and anything it replaces is backed up to `~/.harly24-cp-backup/`. Options: `--workspace DIR`, `--with-prefs` (my font, theme and keymap), `--uninstall`.
+| It creates | Where | So that |
+| --- | --- | --- |
+| the `cprun` command | `~/.local/bin/cprun` | `cprun A.cpp` works in any terminal |
+| the Sublime package | `Packages/harly24-cp` | the **CP** build system and all 40 snippets show up |
+| your solving folder | `~/Documents/CPP` on macOS, `~/cp` on Linux | `debug.h` and `gen.h` are next to your code, plus `demo.cpp` and `gen.cpp` to start from |
+| a backup | `~/.harly24-cp-backup/<date>/` | anything a link would replace is moved here first |
+
+Your existing files in the solving folder are never overwritten, and your editor settings stay as they are unless you add `--with-prefs`. You'll see something like:
+
+```
+Toolchain
+  ok       GCC 15  /opt/homebrew/bin/g++-15
+  ok       perl  runs the time and memory guards
+  ok       lldb  names the crash line
+Command line
+  link     ~/.local/bin/cprun → bin/cprun
+Sublime Text
+  link     ~/Library/Application Support/Sublime Text/Packages/harly24-cp → sublime
+Workspace  ~/Documents/CPP
+  link     ~/Documents/CPP/debug.h → include/debug.h
+  copy     ~/Documents/CPP/demo.cpp
+```
+
+A `missing` line names the command that installs what's missing.
+
+**Then check it works:**
+
+1. **Restart Sublime Text**, so it loads the new package, and pick **Tools > Build System > CP**.
+2. Open `demo.cpp` in your solving folder and press **Cmd+B** (Ctrl+B on Linux). The panel ends with `✓ OK`, and `debug.txt` fills up.
+3. Change `#define DEMO 0` to `1` and press Cmd+B again: a crash, reported with its line. DEMO 0 to 8 shows every verdict.
+4. In a new `.cpp` file, type `CPP` and press **Tab** for the contest template.
+
+| Option | Does |
+| --- | --- |
+| `--workspace DIR` | use another solving folder |
+| `--with-prefs` | also link my Sublime preferences, keymap and mousemap |
+| `--uninstall` | remove every link the installer made; your files and the backups stay |
+
+Because everything is a link, `git pull` updates the whole setup at once.
 
 <br>
 

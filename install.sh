@@ -120,6 +120,6 @@ done
 
 step "Next"
 if [ "$os" = Darwin ]; then key=Cmd; else key=Ctrl; fi
-say "  1. Sublime: Tools > Build System > CP"
+say "  1. Restart Sublime Text, then Tools > Build System > CP"
 say "  2. Open $workspace/demo.cpp and press $key+B"
 say "  3. New file: type CPP and press Tab for the contest template"
