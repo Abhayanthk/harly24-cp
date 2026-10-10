@@ -1,6 +1,7 @@
 // gen.h: helpers for gen.cpp. Cmd+B on any gen*.cpp writes what it prints to input.txt (see run.sh).
 #pragma once
 #include <bits/stdc++.h>
+#include <cassert>   // GCC 16's <bits/stdc++.h> no longer provides assert
 
 using ll = long long;
 

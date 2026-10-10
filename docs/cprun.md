@@ -105,3 +105,7 @@ cprun keeps a precompiled `<bits/stdc++.h>` per flag set in `~/Library/Caches/ha
 | stack | linker flag, 512 MB | `ulimit -s`, 1 GB |
 
 Windows: use WSL.
+
+## GCC 16 and `assert`
+
+From GCC 16, `<bits/stdc++.h>` no longer declares `assert`. The contest template still has it, because the pb_ds headers behind `ordered_set` include `<cassert>`. In any other file that calls `assert`, add `#include <cassert>`, or it stops compiling the day your compiler, or the judge's, moves to GCC 16.
