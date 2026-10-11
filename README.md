@@ -161,7 +161,7 @@ Because everything is a link, updating (the one-liner again, or `git pull` in a 
 - **About a second faster per build.** cprun keeps a precompiled `<bits/stdc++.h>` for each set of flags and rebuilds it when the compiler or the flags change.
 - **Guards that work on macOS.** macOS ignores `ulimit -v`, so a small Perl watchdog forks the program, polls its memory, enforces the time limit and reads its CPU time back.
 - **The crash line.** The program reruns once under lldb or gdb, from a scratch copy: on macOS a debugged binary loses the editor's folder permission and would ask for `~/Documents` access after every build.
-- **Tested.** [tests/test.sh](tests/test.sh) runs 67 checks: every printable type, every verdict and its line, every generator format, every snippet inside the template. CI runs it on macOS and Ubuntu.
+- **Tested.** [tests/test.sh](tests/test.sh) runs 72 checks: every printable type, every verdict and its line, every generator format, every snippet inside the template, and the LeetCode runner on LeetCode's own input format. CI runs it on macOS and Ubuntu.
 
 <br>
 

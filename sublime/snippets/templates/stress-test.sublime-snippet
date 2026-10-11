@@ -7,12 +7,11 @@
 #include "AllHeaders.h"
 #else
 #define debug(...)       ;
-#define _FASTIO_LOCAL()  ;
 #endif
 
 #define fastIO \
-ios::sync_with_stdio(false); cin.tie(nullptr); cout.tie(nullptr);\
-cout.precision(numeric_limits<double>::max_digits10); _FASTIO_LOCAL()
+ios::sync_with_stdio(false); cin.tie(nullptr);\
+cout.precision(numeric_limits<double>::max_digits10)
 
 using namespace std;
 
@@ -74,7 +73,7 @@ int fastSolve(const Test& t) {
 }
 
 int32_t main() {
-    fastIO
+    fastIO;
     for (int test = 1; test <= 100000; test++) {
         Test t = gen();
         int aa = brute(t), bb = fastSolve(t);

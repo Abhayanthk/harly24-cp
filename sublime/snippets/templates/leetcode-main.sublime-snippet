@@ -18,12 +18,11 @@
 #include "AllHeaders.h"
 #else
 #define debug(...)       ;
-#define _FASTIO_LOCAL()  ;
 #endif
 
 #define fastIO \
-ios::sync_with_stdio(false); cin.tie(nullptr); cout.tie(nullptr);\
-cout.precision(numeric_limits<double>::max_digits10); _FASTIO_LOCAL()
+ios::sync_with_stdio(false); cin.tie(nullptr);\
+cout.precision(numeric_limits<double>::max_digits10)
 
 using namespace std;
 
@@ -35,51 +34,102 @@ using namespace std;
 #define sec                             second
 #define vii                             vector<vector<int>>
 #define ll                              long long
-#define inf                             5e18
-#define sz(a)                           ((int)a.size())
-#define neginf                          -5e18
-#define Min(a)                          *min_element(a.begin(), a.end())
-#define Max(a)                          *max_element(a.begin(), a.end())
-#define all(v)                          v.begin(), v.end()
+#define inf                             (long long)2e18
+#define sz(a)                           ((int)(a).size())
+#define neginf                          (-inf)
+#define Min(a)                          *min_element((a).begin(), (a).end())
+#define Max(a)                          *max_element((a).begin(), (a).end())
+#define all(v)                          (v).begin(), (v).end()
 #define double                          long double
 #define input(v)                        for(int i = 0; i < sz(v); i++) cin >> v[i]
 #define printf(v)                       for(auto x: v) cout << x << " "
-#define lcm(a, b)                       ((b) / gcd(a, b)*a)
+#define lcm(a, b)                       ((a) / gcd((a), (b)) * (b))
 #define nfor(i,a,b)                     for(int i = a; i < b; i++)
 #define rfor(i,a,b)                     for(int i = a; i >= b; i--)
 
+// Paste the Solution class here. If it uses the macros above, submit them with it.
+$0
 
+// Reads LeetCode's example box as pasted into input.txt:   nums = [2,7,11,15], target = 9
+// Numbers, true/false, "strings", chars ("a" or 'a') and nested [ ] lists of them.
+// The "name =" labels and the commas are skipped, and several examples run one after another.
+struct LeetCodeInput {
+    string s = string(istreambuf_iterator<char>(cin), {});
+    size_t i = 0;
 
-
+    bool at_label() {   // "name =" before a value
+        size_t j = i;
+        while (j < s.size() && (isalnum((unsigned char)s[j]) || s[j] == '_')) j++;
+        size_t k = j;
+        while (k < s.size() && isspace((unsigned char)s[k])) k++;
+        if (j == i || isdigit((unsigned char)s[i]) || k == s.size() || s[k] != '=') return false;
+        i = k + 1;
+        return true;
+    }
+    void skip() {
+        while (i < s.size()) {
+            if (isspace((unsigned char)s[i]) || s[i] == ',') i++;
+            else if (!at_label()) break;
+        }
+    }
+    [[noreturn]] void fail(const char* expected) {
+        cerr << "LeetCodeInput: expected " << expected << " at \"" << s.substr(i, 30) << "\"\n";
+        exit(1);
+    }
+    template <class T> void read(T& x) {
+        skip();
+        if (i >= s.size()) fail("a value, found the end of input");
+        if constexpr (is_same_v<T, bool>) {
+            if (s.compare(i, 4, "true") == 0) { x = true; i += 4; }
+            else if (s.compare(i, 5, "false") == 0) { x = false; i += 5; }
+            else fail("true or false");
+        } else if constexpr (is_same_v<T, char>) {
+            if (s[i] != '"' && s[i] != '\'') fail("a quoted char");
+            x = s[i + 1];
+            i += 3;
+        } else if constexpr (is_same_v<T, string>) {
+            size_t close = s[i] == '"' ? s.find('"', i + 1) : string::npos;
+            if (close == string::npos) fail("a \"string\"");
+            x = s.substr(i + 1, close - i - 1);
+            i = close + 1;
+        } else if constexpr (is_arithmetic_v<T>) {
+            char* end;
+            if constexpr (is_integral_v<T>) x = strtoll(&s[i], &end, 10);
+            else x = strtold(&s[i], &end);
+            if (end == &s[i]) fail("a number");
+            i = end - s.data();
+        } else {   // a vector of any of the above, nested as deep as needed
+            if (s[i] != '[') fail("[");
+            x.clear();
+            for (i++, skip(); i < s.size() && s[i] != ']'; skip()) {
+                typename T::value_type item;
+                read(item);
+                x.push_back(item);
+            }
+            if (i >= s.size()) fail("]");
+            i++;
+        }
+    }
+    template <class... T> bool next(T&... args) {
+        skip();
+        if (i >= s.size()) return false;
+        (read(args), ...);
+        return true;
+    }
+};
 
 int32_t main(){
-    Solution sol;
-    auto ans = sol.name(v, k);
-    debug(ans);
+    fastIO;
+    LeetCodeInput in;
+    ${2:vi nums; int target;}
+    while (in.next(${3:nums, target})) {
+        Solution sol;
+        auto ans = sol.${1:twoSum}($3);   // for a void (in-place) method: call it, then debug the argument
+        debug(ans);
+    }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 ]]></content>
 	<tabTrigger>leetcode</tabTrigger>
 	<scope>source.c++</scope>
-	<description>LeetCode local runner: paste the Solution class, call it, debug the answer</description>
+	<description>LeetCode local runner: paste the Solution class and the examples as LeetCode shows them, debug every answer</description>
 </snippet>

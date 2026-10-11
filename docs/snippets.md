@@ -8,7 +8,7 @@ drop a new `.sublime-snippet` file there and Sublime picks it up at once.
 | Trigger | What it gives you | File |
 | --- | --- | --- |
 | `CPP` | Contest template: ordered_set, debug(), macros, multi-test main | [contest-main](../sublime/snippets/templates/contest-main.sublime-snippet) |
-| `leetcode` | LeetCode local runner: paste the Solution class, call it, debug the answer | [leetcode-main](../sublime/snippets/templates/leetcode-main.sublime-snippet) |
+| `leetcode` | LeetCode local runner: paste the Solution class and the examples as LeetCode shows them, debug every answer | [leetcode-main](../sublime/snippets/templates/leetcode-main.sublime-snippet) |
 | `stressTesting` | Stress test: random small tests, brute vs fast, stop at the first mismatch | [stress-test](../sublime/snippets/templates/stress-test.sublime-snippet) |
 
 ## Math and number theory

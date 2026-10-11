@@ -4,6 +4,7 @@
 #   cprun gives the right verdict for every demo case, and names the crash line
 #   every gen.h format produces valid input
 #   every snippet compiles inside the contest template
+#   the whole-program templates compile, and the LeetCode runner reads LeetCode's input format
 #
 # SKIP_CRASH_LINE=1 skips the crash-line checks (machines without a usable debugger).
 
@@ -94,6 +95,59 @@ done
 while read -r name; do
   "$gxx" -std=c++23 -fsyntax-only -DLOCAL -I"$repo/include" "snip_$name.cpp" 2> err.txt; check "$name" $? "$(grep -m2 error err.txt)"
 done < snippets.txt
+
+echo "whole-program templates"
+python3 - "$repo" <<'EOF'
+import pathlib, re, sys
+repo = pathlib.Path(sys.argv[1])
+def expand(name, fields={}):   # fill the tab stops: given values first, else each field's default
+    path = next(repo.glob(f"sublime/snippets/**/{name}.sublime-snippet"))
+    s = re.search(r"<!\[CDATA\[(.*?)\]\]>", path.read_text(), re.S).group(1)
+    values = dict(re.findall(r"\$\{(\d+):([^}]*)\}", s)) | fields
+    s = re.sub(r"\$\{(\d+):[^}]*\}", lambda m: values.get(m.group(1), ""), s)
+    return re.sub(r"\$(\d+)", lambda m: values.get(m.group(1), ""), s)
+two_sum = """class Solution {
+public:
+    vector<int> twoSum(vector<int>& nums, int target) {
+        unordered_map<int, int> seen;
+        for (int i = 0; i < sz(nums); i++) {
+            if (seen.count(target - nums[i])) return {seen[target - nums[i]], i};
+            seen[nums[i]] = i;
+        }
+        return {};
+    }
+};"""
+probe = """class Solution {
+public:
+    string probe(vii& grid, vector<string>& words, vector<vector<char>>& board, bool flag, double x, ll big, int k) {
+        ostringstream o;
+        for (auto& row : grid) for (int v : row) o << v << ' ';
+        for (auto& w : words) o << w << '|';
+        for (auto& row : board) for (char c : row) o << c;
+        o << ' ' << flag << ' ' << x << ' ' << big << ' ' << k;
+        return o.str();
+    }
+};"""
+pathlib.Path("lc_two_sum.cpp").write_text(expand("leetcode-main", {"0": two_sum}))
+pathlib.Path("lc_probe.cpp").write_text(expand("leetcode-main", {"0": probe, "1": "probe",
+    "2": "vii grid; vector<string> words; vector<vector<char>> board; bool flag; double x; ll big; int k;",
+    "3": "grid, words, board, flag, x, big, k"}))
+pathlib.Path("stress_full.cpp").write_text(expand("stress-test"))
+EOF
+"$gxx" -std=c++23 -fsyntax-only -DLOCAL -I"$repo/include" stress_full.cpp 2> err.txt; check "stress-test compiles" $? "$(grep -m2 error err.txt)"
+"$gxx" -std=c++23 -fsyntax-only lc_two_sum.cpp 2> err.txt; check "leetcode-main compiles without LOCAL" $? "$(grep -m2 error err.txt)"
+printf 'nums = [2,7,11,15], target = 9\nnums = [3,2,4]\ntarget = 6\n' > input.txt
+"$cprun" debug lc_two_sum.cpp > log.txt 2>&1
+grep -q 'ans = \[0, 1\]' debug.txt && grep -q 'ans = \[1, 2\]' debug.txt
+check "leetcode-main runs every example in input.txt" $? "$(tail -3 log.txt; cat debug.txt)"
+printf 'grid = [[1,-2],[3],[]], words = ["ab","c d"], board = [["5","."]],\nflag = true, x = 2.5, big = 1000000000000000007, k = -3\n' > input.txt
+"$cprun" debug lc_probe.cpp > log.txt 2>&1
+grep -qF 'ans = "1 -2 3 ab|c d|5. 1 2.5 1000000000000000007 -3"' debug.txt
+check "leetcode-main reads nested lists, strings, chars, bools, floats" $? "$(tail -3 log.txt; cat debug.txt)"
+printf 'nums = [2,7,null], target = 9\n' > input.txt
+"$cprun" debug lc_two_sum.cpp > log.txt 2>&1
+grep -q 'LeetCodeInput: expected a number at "null' error.txt
+check "leetcode-main names the input it can't read" $? "$(tail -3 log.txt; cat error.txt)"
 
 echo
 echo "$pass passed, $fail failed"
